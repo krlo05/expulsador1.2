@@ -102,5 +102,12 @@ async def bot_main():
 
 # 🚀 Ejecutar
 if __name__ == '__main__':
-    asyncio.run(bot_main())
+    import asyncio
+
+    try:
+        asyncio.get_event_loop().run_until_complete(bot_main())
+    except RuntimeError as e:
+        # Esto evita que intente cerrar el loop si ya está corriendo
+        print(f"⚠️ Loop ya en ejecución: {e}")
+
 
