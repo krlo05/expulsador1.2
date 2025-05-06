@@ -4,6 +4,8 @@ import asyncio
 import os
 import requests
 import threading
+import os
+from dotenv import load_dotenv
 from flask import Flask
 from telegram import Update, ChatMember
 from telegram.ext import (
@@ -12,8 +14,18 @@ from telegram.ext import (
     ContextTypes,
 )
 
+
+
+# Cargar variables desde .env (solo útil localmente)
+load_dotenv()
+
+
+
+
 # 🔐 Token y constantes
-TOKEN = '7725370274:AAG8f63RCrHd1PCcV4hpupwuQ3if-9RPI-I'
+TOKEN = os.getenv("BOT_TOKEN")
+if not TOKEN:
+    raise ValueError("⚠️ BOT_TOKEN no está definido como variable de entorno")
 DB_NAME = 'members.db'
 RENDER_URL = 'https://telegram-expulsador-bot.onrender.com'
 ADMIN_CHAT_ID = 5286685895  # Coloca tu chat ID de Telegram para pruebas
