@@ -2,11 +2,7 @@ import sqlite3
 import datetime
 import asyncio
 import os
-import requests
-import threading
-import os
 from dotenv import load_dotenv
-from flask import Flask
 from telegram import Update, ChatMember
 from telegram.ext import (
     ApplicationBuilder,
@@ -14,28 +10,15 @@ from telegram.ext import (
     ContextTypes,
 )
 
-
-
 # Cargar variables desde .env (solo útil localmente)
 load_dotenv()
-
-
-
 
 # 🔐 Token y constantes
 TOKEN = os.getenv("BOT_TOKEN")
 if not TOKEN:
     raise ValueError("⚠️ BOT_TOKEN no está definido como variable de entorno")
 DB_NAME = 'members.db'
-RENDER_URL = 'https://telegram-expulsador-bot.onrender.com'
-ADMIN_CHAT_ID = 5286685895  # Coloca tu chat ID de Telegram para pruebas
-
-# 🌐 Flask app para keep-alive (por ejemplo en Render)
-app_web = Flask(__name__)
-
-@app_web.route('/')
-def index():
-    return 'Bot funcionando correctamente ✅'
+ADMIN_CHAT_ID = 5286685895  # Reemplaza con tu chat ID
 
 # 🧱 Inicializar DB
 def init_db():
@@ -99,43 +82,25 @@ async def check_old_members(app):
         conn.close()
         await asyncio.sleep(30)
 
-# 🔄 Keep-alive para Render u otro hosting
-async def keep_alive():
-    while True:
-        try:
-            requests.get(RENDER_URL)
-            print("🔄 Ping enviado a Render")
-        except Exception as e:
-            print(f"⚠️ Error enviando ping a Render: {e}")
-        await asyncio.sleep(600)
-
 # 🧠 Función principal del bot
 async def bot_main():
     init_db()
-
     app = ApplicationBuilder().token(TOKEN).build()
-
     app.add_handler(ChatMemberHandler(handle_chat_member_update, ChatMemberHandler.CHAT_MEMBER))
 
-    # Tareas paralelas
+    # Ejecutar tareas en segundo plano
     asyncio.create_task(check_old_members(app))
-    asyncio.create_task(keep_alive())
 
     print("🤖 Bot corriendo...")
 
     try:
-        await app.bot.send_message(chat_id=ADMIN_CHAT_ID, text="🤖 Bot iniciado correctamente y en funcionamiento ✅")
+        await app.bot.send_message(chat_id=ADMIN_CHAT_ID, text="🤖 Bot iniciado correctamente ✅")
     except Exception as e:
         print(f"⚠️ No se pudo enviar mensaje al admin: {e}")
 
     await app.run_polling()
 
-# 🚀 Iniciar bot y servidor web sin conflictos de event loop
+# 🚀 Ejecutar
 if __name__ == '__main__':
-    threading.Thread(target=lambda: app_web.run(host='0.0.0.0', port=10000), daemon=True).start()
-
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    loop.create_task(bot_main())
-    loop.run_forever()
+    asyncio.run(bot_main())
 
