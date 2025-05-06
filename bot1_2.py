@@ -98,7 +98,13 @@ async def bot_main():
     except Exception as e:
         print(f"⚠️ No se pudo enviar mensaje al admin: {e}")
 
-    await app.run_polling()
+    await app.initialize()
+    await app.start()
+    await app.updater.start_polling()
+    await app.updater.idle()
+    await app.stop()
+    await app.shutdown()
+
 
 # 🚀 Ejecutar
 if __name__ == '__main__':
