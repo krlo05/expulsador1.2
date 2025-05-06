@@ -98,12 +98,15 @@ async def bot_main():
     except Exception as e:
         print(f"⚠️ No se pudo enviar mensaje al admin: {e}")
 
-    await app.initialize()
-    await app.start()
-    await app.updater.start_polling()
-    await app.updater.idle()
-    await app.stop()
-    await app.shutdown()
+    # Evitar error: "event loop already running"
+    try:
+        await app.run_polling()
+    except RuntimeError as e:
+        if "event loop is already running" in str(e):
+            print("⚠️ Loop ya en ejecución: ignorando cierre")
+        else:
+            raise
+
 
 
 # 🚀 Ejecutar
