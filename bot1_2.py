@@ -109,7 +109,7 @@ async def bot_main():
 # 🚀 Ejecutar
 if __name__ == '__main__':
     
-     nest_asyncio.apply()
+    nest_asyncio.apply()
     loop = asyncio.get_event_loop()
     loop.create_task(bot_main())
     loop.run_forever()
