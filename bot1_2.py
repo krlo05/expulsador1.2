@@ -4,7 +4,7 @@ import asyncio
 import os
 from dotenv import load_dotenv
 from telegram import Update, ChatMember
-from telegram.ext import ApplicationBuilder, ChatMemberHandler, ContextTypes,
+from telegram.ext import ApplicationBuilder, ChatMemberHandler, ContextTypes
 import nest_asyncio
 
 # Cargar variables desde .env (solo útil localmente)
