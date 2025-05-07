@@ -105,7 +105,6 @@ async def bot_main():
             raise
 
 
-
 # 🚀 Ejecutar
 if __name__ == '__main__':
     
